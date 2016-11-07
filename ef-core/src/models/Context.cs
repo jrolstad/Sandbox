@@ -11,7 +11,20 @@ namespace ConsoleApplication.models
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Filename=./blog.db");
+        var connectionString = @"Server=(localdb)\mssqllocaldb;Database=my-efcore-db;Trusted_Connection=True;";
+        optionsBuilder.UseSqlServer(connectionString);
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Blog>()
+                .Property(b => b.BlogId)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Post>()
+                .Property(b => b.PostId)
+                .ValueGeneratedOnAdd();
+                
+        }
 }
 }

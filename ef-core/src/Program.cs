@@ -2,6 +2,7 @@
 using ConsoleApplication.models;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleApplication
 {
@@ -15,17 +16,18 @@ namespace ConsoleApplication
                  .FirstOrDefault(b=>b.Name == "MyBlog");
                 if(blog == null)
                 {
-                    blog = new Blog{Name="MyBlog"};
+                    blog = new Blog{Name="MyBlog",BlogId = 1};
                     context.Blogs.Add(blog);
                 }
 
                 var now = DateTime.Now.Ticks;
-                var post = new Post{Title=$"Blog of the Moment - {now}",Blog = blog};
+                var nextPostId = context.Posts.Select(p=>p.PostId).Max() + 1;
+                var post = new Post{Title=$"Blog of the Moment - {now}",Blog = blog,PostId = nextPostId};
                 context.Posts.Add(post);
 
                 context.SaveChanges();
 
-                foreach(var blogToRead in context.Blogs)
+                foreach(var blogToRead in context.Blogs.Include(b=>b.Posts))
                 {
                     foreach(var postToRead in blogToRead.Posts)
                     {
