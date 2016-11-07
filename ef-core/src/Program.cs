@@ -16,13 +16,12 @@ namespace ConsoleApplication
                  .FirstOrDefault(b=>b.Name == "MyBlog");
                 if(blog == null)
                 {
-                    blog = new Blog{Name="MyBlog",BlogId = 1};
+                    blog = new Blog{Name="MyBlog"};
                     context.Blogs.Add(blog);
                 }
 
                 var now = DateTime.Now.Ticks;
-                var nextPostId = context.Posts.Select(p=>p.PostId).Max() + 1;
-                var post = new Post{Title=$"Blog of the Moment - {now}",Blog = blog,PostId = nextPostId};
+                var post = new Post{Title=$"Blog of the Moment - {now}",Blog = blog};
                 context.Posts.Add(post);
 
                 context.SaveChanges();

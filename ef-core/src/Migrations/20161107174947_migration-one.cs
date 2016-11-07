@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace src.Migrations
 {
@@ -13,7 +14,7 @@ namespace src.Migrations
                 columns: table => new
                 {
                     BlogId = table.Column<int>(nullable: false)
-                        .Annotation("Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true),
                     Url = table.Column<string>(nullable: true)
                 },
@@ -27,7 +28,7 @@ namespace src.Migrations
                 columns: table => new
                 {
                     PostId = table.Column<int>(nullable: false)
-                        .Annotation("Autoincrement", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     BlogId = table.Column<int>(nullable: false),
                     Content = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true)

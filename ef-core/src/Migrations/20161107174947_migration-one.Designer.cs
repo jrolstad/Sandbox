@@ -8,13 +8,14 @@ using ConsoleApplication.models;
 namespace src.Migrations
 {
     [DbContext(typeof(BloggingContext))]
-    [Migration("20161107161145_migration-one")]
+    [Migration("20161107174947_migration-one")]
     partial class migrationone
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.0.0-rtm-21431");
+                .HasAnnotation("ProductVersion", "1.0.1")
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("ConsoleApplication.models.Blog", b =>
                 {
