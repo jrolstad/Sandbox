@@ -2,9 +2,9 @@ namespace cryptography.encryption
 {
     public class EncryptedPacket
     {
-        public byte[] EncryptedSessionKey;
-        public byte[] EncryptedData;
-        public byte[] InitializationVector;
+        public byte[] EncryptedKey {get;set;}
+        public byte[] EncryptedData {get;set;}
+        public byte[] InitializationVector {get;set;}
         public string Method {get;set;}
     }
 
