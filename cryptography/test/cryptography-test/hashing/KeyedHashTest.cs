@@ -1,7 +1,7 @@
 using cryptography;
 using Xunit;
 
-namespace cryptography_test
+namespace cryptography_test.hashing
 {
     public class KeyedHashTest
     {
