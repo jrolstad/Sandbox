@@ -6,6 +6,8 @@ namespace cryptography.encryption
         public byte[] EncryptedData {get;set;}
         public byte[] InitializationVector {get;set;}
         public string Method {get;set;}
+
+        public byte[] Hmac {get;set;}
     }
 
     public class DecryptedPacket
