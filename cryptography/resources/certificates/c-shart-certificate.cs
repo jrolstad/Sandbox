@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
 // Taken from http://stackoverflow.com/questions/30794112/problems-generating-a-self-signed-1024-bit-x509certificate2-using-the-rsa-aes-pr
+// Also see http://stackoverflow.com/questions/30769992/generating-a-self-signed-x509certificate2-certificate-with-its-private-key for a different example
 namespace WebSockets
 {
     public struct SystemTime
