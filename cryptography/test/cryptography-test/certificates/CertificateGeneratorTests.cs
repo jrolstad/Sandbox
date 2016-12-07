@@ -24,7 +24,9 @@ namespace cryptography_test.certificates
                 {
                     Console.WriteLine("FriendlyName:{0}",cert.FriendlyName);
                     Console.WriteLine("KeyAlgorithm:{0}",cert.GetKeyAlgorithm());
-                     Console.WriteLine("IssuerName:{0}",cert.IssuerName.Name);
+                    Console.WriteLine("IssuerName:{0}",cert.IssuerName.Name);
+                    Console.WriteLine("NotBefore:{0}",cert.NotBefore);
+                    Console.WriteLine("NotAfter:{0}",cert.NotAfter);
                 }
             }
 
