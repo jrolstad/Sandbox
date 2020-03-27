@@ -3,6 +3,7 @@
   "name": "asp.net",
   "private": true,
   "devDependencies": {
-    "@icm/portal-extension-survey": "0.1.3"
+    "@icm/portal-extension-survey": "0.1.3",
+    "@icm/portal-foundation": "0.2.94"
   }
 }
