@@ -13,6 +13,7 @@ namespace SampleFunction
 {
     public static class Functions
     {
+
         [FunctionName("samples-response-body")]
         public static async Task TrackResponseBody([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, 
             ILogger log)
