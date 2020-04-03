@@ -22,8 +22,13 @@ namespace SampleFunction
             var client = HttpClientFactory.Create();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",accessToken);
 
-            var result = await client.GetAsync("https://graph.microsoft.com/beta/me/");
+            var url = "https://graph.microsoft.com/beta/me/";
+
+            log.LogInformation($"Invoking {url}");
+            var result = await client.GetAsync(url);
             result.EnsureSuccessStatusCode();
+
+            log.LogInformation($"Received response:\r\n {await result.Content.ReadAsStringAsync()} ");
         }
 
         [FunctionName("samples-request-body")]
@@ -43,9 +48,12 @@ namespace SampleFunction
             var url = $"https://graph.microsoft.com/beta/applications/{request.id}";
 
             var content = new ObjectContent<TaggableItem>(request, new JsonMediaTypeFormatter());
+            log.LogInformation($"Invoking {url} with body {await content.ReadAsStringAsync()}");
+
             var result = await client.PatchAsync(url, content);
             result.EnsureSuccessStatusCode();
 
+            log.LogInformation($"Received response:\r\n {await result.Content.ReadAsStringAsync()} ");
         }
 
         private static async Task<string> GetAccessToken()
