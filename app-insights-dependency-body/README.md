@@ -23,3 +23,11 @@ To run this example, the following steps must be taken
 ```
 3. Using Visual Studio 2019 or later, ensure that your dev environment is properly authenticated.  This is done by selecting the menu items Tools > Options > Azure Service Authentication and ensuring an account is selected / authorized.
 4. Run the SampleFunction project (each method is on a timer than runs every minute) and check for the logs in your Application Insights instance!
+
+## Sample Application Insights Query
+Use the following query on the Applications Insights instance specific in the local.settings.json to view the data
+```
+dependencies
+| extend request_body = customDimensions["request-body"], response_body = customDimensions["response-body"]
+| order by timestamp desc
+```
