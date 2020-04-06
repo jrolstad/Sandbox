@@ -5,7 +5,7 @@ Given specific circumstances, it may be beneficial to log the request / response
 
 # Examples
 ## GraphApiContentInitializer
-This initializer captures the HTTP call request / response body and places them into the matching dependency telemetry
+This [initializer](SampleFunction/GraphApiContentInitializer.cs) captures the HTTP call request / response body and places them into the matching dependency telemetry
 
 # How to run
 To run this example, the following steps must be taken
