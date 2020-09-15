@@ -36,6 +36,7 @@ namespace ConditionalAccessLoadTest.Factories
                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue("bearer", token);
                }));
 
+            
             return graphServiceClient;
         }
 
