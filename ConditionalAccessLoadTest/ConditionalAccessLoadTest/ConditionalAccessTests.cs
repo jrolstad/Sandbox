@@ -5,15 +5,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ConditionalAccessLoadTest
 {
-    public class UnitTest1
+    public class ConditionalAccessTests
     {
-        private string _tenantId = "81c98a12-bb40-4777-8e14-908eafa46fa7";
-        private string _clientId = "9e1a841e-057c-4a2e-9ecf-e3688b298766";
-        private string _clientSecret = "<secret here>";
+        private string _tenantId = Environment.GetEnvironmentVariable("aad-dev-tenant-id",EnvironmentVariableTarget.User);
+        private string _clientId = Environment.GetEnvironmentVariable("aad-dev-client-id", EnvironmentVariableTarget.User);
+        private string _clientSecret = Environment.GetEnvironmentVariable("aad-dev-client-secret", EnvironmentVariableTarget.User);
 
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public ConditionalAccessTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
         [Theory]
         //[InlineData("1",1000)]
         //[InlineData("2",1000)]
@@ -81,7 +88,7 @@ namespace ConditionalAccessLoadTest
             var applications = await GetLoadTestApplications(appManager);
 
             Assert.Equal(applications.Select(a=>a.Id).Count(), applications.Count);
-            Assert.Equal(1, applications.Count);
+            _testOutputHelper.WriteLine($"Number of applications: {applications.Count}");
         }
 
         private static async Task<List<Application>> GetLoadTestApplications(ApplicationManager appManager)
@@ -106,7 +113,7 @@ namespace ConditionalAccessLoadTest
         }
 
         [Theory]
-        [InlineData("4a651cd4-46a4-4350-8cc4-e2395ee15e8a", 254)]
+        [InlineData("4a651cd4-46a4-4350-8cc4-e2395ee15e8a", 255)]
         public async Task AssignAppsToPolicy(string policyId, int top)
         {
             var factory = new Factories.GraphClientFactory(_tenantId, _clientId, _clientSecret);
@@ -121,6 +128,15 @@ namespace ConditionalAccessLoadTest
                 .Select(a => a.AppId)
                 .ToList();
             await policyManager.AddApplicationToConditionalAccessPolicy(policyId, appIds);
+        }
+
+        [Fact]
+        public void GetMaxPolicyDetailSize()
+        {
+            // Per code at https://dev.azure.com/msazure/One/_git/AD-madrid-MSGraph?path=%2Fsrc%2FIdentityProtectionServices.WebRole%2FProviders%2FPolicy%2FConditionalAccessPolicyManager.cs&_a=contents&version=GBmaster
+            var maxSize = 1024 * 10 * sizeof(char);
+
+            _testOutputHelper.WriteLine($"Maximum PolicyDetail message size: {maxSize}");
         }
     }
 }

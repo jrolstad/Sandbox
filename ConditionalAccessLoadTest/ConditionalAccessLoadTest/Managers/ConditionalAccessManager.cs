@@ -41,7 +41,7 @@ namespace ConditionalAccessLoadTest.Managers
                 {
                     Applications = new ConditionalAccessApplications
                     {
-                        IncludeApplications = appList,
+                        IncludeApplications = applications,
                         ExcludeApplications = new List<string>(),
                         IncludeUserActions = new List<string>(),
                         ODataType = null
