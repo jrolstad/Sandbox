@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graph;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,6 +30,47 @@ namespace ConditionalAccessLoadTest.Managers
                 .AddAsync(servicePrincipal);
 
             return result;
+        }
+
+        public Task<ServicePrincipal> Update(ServicePrincipal toUpdate)
+        {
+            var client = _graphClientFactory.Create();
+            return client.ServicePrincipals[toUpdate.Id]
+                .Request()
+                .UpdateAsync(toUpdate);
+        }
+
+        public async Task AssignGroupToDefaultRole(string servicePrincipalId,List<string> groupPrincipalIds)
+        {
+            var client = _graphClientFactory.Create();
+            var existing = await client.ServicePrincipals[servicePrincipalId]
+                       .AppRoleAssignedTo
+                       .Request()
+                       .GetAsync();
+            if (existing.Any(a => groupPrincipalIds.Contains(a.PrincipalId.ToString()))) return;
+
+            var appRoleAssignmentTasks = groupPrincipalIds
+                .Select(id =>
+                {
+
+                    const string groupPrincipalType = "Group";
+                    var defaultAppRoleId = Guid.Parse("00000000-0000-0000-0000-000000000000");
+
+                    var assignment = new AppRoleAssignment
+                    {
+                        PrincipalId = Guid.Parse(id),
+                        PrincipalType = groupPrincipalType, 
+                        ResourceId = Guid.Parse(servicePrincipalId),
+                        AppRoleId = defaultAppRoleId
+
+                    };
+                    return client.ServicePrincipals[servicePrincipalId]
+                        .AppRoleAssignedTo
+                        .Request()
+                        .AddAsync(assignment);
+                });
+
+            await Task.WhenAll(appRoleAssignmentTasks);
         }
 
         public async Task<List<ServicePrincipal>> Get()
