@@ -58,16 +58,6 @@ namespace ConditionalAccessLoadTest
             _testOutputHelper.WriteLine($"Group Assignment Count:{assignments.Count}");
         }
 
-        [Fact]
-        public async Task GetServicePrincipals()
-        {
-            var factory = new Factories.GraphClientFactory(_tenantId, _clientId, _clientSecret);
-            var servicePrincipalManager = new ServicePrincipalManager(factory);
-
-            var servicePrincipals = await servicePrincipalManager.Get();
-            _testOutputHelper.WriteLine($"Service Principal Count:{servicePrincipals.Count}");
-        }
-
         private static async Task<List<ServicePrincipal>> GetLoadTestServicePrincipals(ApplicationManager appManager, ServicePrincipalManager servicePrincipalManager)
         {
             var applications = await GetLoadTestApplications(appManager);

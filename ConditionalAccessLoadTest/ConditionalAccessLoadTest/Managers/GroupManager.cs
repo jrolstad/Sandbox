@@ -30,7 +30,8 @@ namespace ConditionalAccessLoadTest.Managers
 
             var request = client.Groups[id]
                 .AppRoleAssignments
-                .Request();
+                .Request()
+                .Top(999);
 
             var data = new List<AppRoleAssignment>();
             do
