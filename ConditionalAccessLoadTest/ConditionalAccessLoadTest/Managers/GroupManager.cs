@@ -32,20 +32,14 @@ namespace ConditionalAccessLoadTest.Managers
                 .AppRoleAssignments
                 .Request();
 
-            var result = await request.GetAsync();
-
             var data = new List<AppRoleAssignment>();
-            data.AddRange(result.CurrentPage);
             do
             {
-
-                if (result.NextPageRequest != null)
-                {
-                    result = await result.NextPageRequest.GetAsync();
-                }
+                var result = await request.GetAsync();
                 data.AddRange(result.CurrentPage);
 
-            } while (result.NextPageRequest != null);
+                request = result.NextPageRequest;
+            } while (request != null);
 
 
             return data;

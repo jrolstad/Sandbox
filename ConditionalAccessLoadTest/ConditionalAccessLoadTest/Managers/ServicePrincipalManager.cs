@@ -82,24 +82,17 @@ namespace ConditionalAccessLoadTest.Managers
                 .Select("appId,id,displayName")
                 .Top(999);
 
+            var data = new List<ServicePrincipal>();
 
-            var result = await request.GetAsync();
-
-            var appData = new List<ServicePrincipal>();
-            appData.AddRange(result.CurrentPage);
             do
             {
+                var result = await request.GetAsync();
+                data.AddRange(result.CurrentPage);
 
-                if (result.NextPageRequest != null)
-                {
-                    result = await result.NextPageRequest.GetAsync();
-                }
-                appData.AddRange(result.CurrentPage);
+                request = result.NextPageRequest;
+            } while (request != null);
 
-            } while (result.NextPageRequest != null);
-
-
-            return appData;
+            return data;
 
         }
     }

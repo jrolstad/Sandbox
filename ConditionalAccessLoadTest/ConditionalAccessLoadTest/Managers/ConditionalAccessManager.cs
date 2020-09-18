@@ -21,20 +21,6 @@ namespace ConditionalAccessLoadTest.Managers
         {
             var client = _graphClientFactory.Create();
 
-            var accessPolicy = await client.Policies.ConditionalAccessPolicies[policyId]
-                .Request()
-                .GetAsync();
-
-            var existingApplications = accessPolicy
-                .Conditions?
-                .Applications?
-                .IncludeApplications ?? new List<string>();
-
-            var appList = existingApplications
-                .Union(applications)
-                .Distinct()
-                .ToList();
-
             var updatedPolicy = new ConditionalAccessPolicy
             {
                 Conditions = new ConditionalAccessConditionSet
@@ -50,8 +36,6 @@ namespace ConditionalAccessLoadTest.Managers
                 },
                 ODataType = null
             };
-
-            var result = JsonConvert.SerializeObject(updatedPolicy);
 
             await client.Policies.ConditionalAccessPolicies[policyId]
                 .Request()

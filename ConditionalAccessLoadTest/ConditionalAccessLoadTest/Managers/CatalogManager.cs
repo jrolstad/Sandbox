@@ -21,12 +21,20 @@ namespace ConditionalAccessLoadTest.Managers
         {
             var client = _graphClientFactory.Create();
 
-            var data = await client.IdentityGovernance.EntitlementManagement
+            var request = client.IdentityGovernance.EntitlementManagement
                 .AccessPackageCatalogs
-                .Request()
-                .GetAsync();
+                .Request();
 
-            return data.CurrentPage?.ToList();
+            var data = new List<AccessPackageCatalog>();
+            do
+            {
+                var result = await request.GetAsync();
+                data.AddRange(result.CurrentPage);
+
+                request = result.NextPageRequest;
+            } while (request != null);
+
+            return data;
         }
 
         public async Task<AccessPackageCatalog> Get(string id)
