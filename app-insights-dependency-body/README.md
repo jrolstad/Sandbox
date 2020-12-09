@@ -29,5 +29,7 @@ Use the following query on the Applications Insights instance specific in the lo
 ```
 dependencies
 | extend request_body = customDimensions["request-body"], response_body = customDimensions["response-body"]
+| where request_body != "" or response_body != ""
+| where timestamp > ago(30d)
 | order by timestamp desc
 ```
