@@ -15,7 +15,7 @@ namespace Sandbox.SecretShowcase.ConsoleWithDI
                    builder.AddJsonFile($"appsettings.json", true, true);
                    builder.AddEnvironmentVariables();
 
-                   if (hostContext.HostingEnvironment.IsDevelopment())
+                   if (hostContext.HostingEnvironment.IsDevelopment()) // <= Only use for local development, not in prod
                    {
                        builder.AddUserSecrets<Program>();
                    }
