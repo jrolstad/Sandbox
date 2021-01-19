@@ -46,7 +46,7 @@
         function setResponseButton(buttonName, isAccepted, opaqueBlobValue){
             var url = getRedirectUrl();
             url.searchParams.append('IsAccepted', isAccepted);
-            url.searchParams.append('OpaqueBlob ', opaqueBlobValue);
+            url.searchParams.append('OpaqueBlob', opaqueBlobValue);
 
             document.getElementById(buttonName).href=url;
         }
