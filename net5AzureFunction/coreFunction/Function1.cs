@@ -19,7 +19,7 @@ namespace coreFunction
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            var message = "I'm .Net Core 3.0, yo!";
+            var message = "I'm .Net Core 3.1, yo!";
 
             return new OkObjectResult(message);
         }

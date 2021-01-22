@@ -1,28 +1,29 @@
-using System.Collections.Generic;
-using System.Net;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Pipeline;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using fiveFunction.Services;
 
 namespace fiveFunction
 {
-    public static class Function1
+    public class Function1
     {
+        private readonly IHttpResponderService _httpResponderService;
+
+        public Function1(IHttpResponderService httpResponderService)
+        {
+            _httpResponderService = httpResponderService;
+        }
+
         [FunctionName("Function1")]
-        public static HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req,
+        public HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req,
                     FunctionExecutionContext executionContext)
         {
             var logger = executionContext.Logger;
             logger.LogInformation("message logged");
-            var response = new HttpResponseData(HttpStatusCode.OK);
-            var headers = new Dictionary<string, string>();
-            headers.Add("Date", "Mon, 18 Jul 2016 16:06:00 GMT");
-            headers.Add("Content", "Content - Type: text / html; charset = utf - 8");
 
-            response.Headers = headers;
-            response.Body = "Welcome to .NET 5!!";
+            var response = _httpResponderService.ProcessRequest(req);
 
             return response;
         }

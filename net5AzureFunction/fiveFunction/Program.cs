@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Azure.Functions.Worker.Configuration;
+using fiveFunction.Services;
 
 namespace fiveFunction
 {
@@ -28,7 +29,7 @@ namespace fiveFunction
                 })
                 .ConfigureServices(s =>
                 {
-                    //s.AddSingleton<IHttpResponderService, DefaultHttpResponderService>();
+                    s.AddSingleton<IHttpResponderService, DefaultHttpResponderService>();
                 })
                 .Build();
 
