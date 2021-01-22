@@ -10,9 +10,9 @@ namespace fiveFunction
 {
     public static class Function1
     {
-
+        [FunctionName("Function1")]
         public static HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req,
-            FunctionExecutionContext executionContext)
+                    FunctionExecutionContext executionContext)
         {
             var logger = executionContext.Logger;
             logger.LogInformation("message logged");
