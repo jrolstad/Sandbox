@@ -5,6 +5,8 @@ namespace MyApp.Tests
 {
     public class StringServiceTests
     {
+        //https://xunit.net/docs/getting-started/netfx/visual-studio 
+
         [Fact]
         public void Reverse_null_ReturnsNull()
         {
