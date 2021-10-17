@@ -235,8 +235,9 @@ namespace octokit_sandbox.tests
             }
         }
 
-        [Fact]
-        public async Task GetRepositoriesForUser_ValidOrganization_GetsAllRepositoriesUserIsAuthorizedFor()
+        [Theory]
+        [InlineData("oppknox")]
+        public async Task GetRepositoriesForUser_ValidOrganization_GetsAllRepositoriesUserIsAuthorizedFor(string login)
         {
             var provider = ConfigureApplication();
 
@@ -246,7 +247,24 @@ namespace octokit_sandbox.tests
 
             foreach (var item in organizations)
             {
-                var repositories = await service.GetRepositoriesForUser(item,"oppknox");
+                var repositories = await service.GetRepositoriesForUser(item,login);
+                Assert.NotEmpty(repositories);
+            }
+        }
+
+        [Theory]
+        [InlineData("jrolstad")]
+        public async Task GetRepositoryRolesForUser_ValidOrganization_GetsAllRepositoriesUserIsAuthorizedFor(string login)
+        {
+            var provider = ConfigureApplication();
+
+            var service = provider.GetService<OrganizationService>();
+
+            var organizations = await service.Get();
+
+            foreach (var item in organizations)
+            {
+                var repositories = await service.GetRepositoryRolesForUser(item, login);
                 Assert.NotEmpty(repositories);
             }
         }

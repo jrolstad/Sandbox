@@ -189,11 +189,47 @@ namespace octokit_sandbox.core.Services
             return result;
         }
 
+        public async Task<Dictionary<long,string>> GetRepositoryRolesForUser(string org, string login)
+        {
+            var client = _clientFactory.Create();
+            var installation = await client.GitHubApps.GetOrganizationInstallationForCurrent(org);
+
+            var orgClient = await _clientFactory.Create(installation.Id);
+            var repositories = await orgClient.Repository.GetAllForOrg(org);
+
+            var collaboratorTasks = repositories
+                .Select(r => IsRepositoryCollaborator(orgClient, r.Id, login));
+
+            var collaborations = await Task.WhenAll(collaboratorTasks);
+
+            var repositoriesForUser = collaborations
+                .Where(c => c.Value == true)
+                .Select(c => c.Key);
+
+            var roleTasks = repositoriesForUser
+                .Select(r => GetRepositoryRole(orgClient,r,login));
+
+            var roles = await Task.WhenAll(roleTasks);
+            var result = roles
+                .ToDictionary(r => r.Key, r => r.Value);
+
+            return result;
+        }
+
         private async Task<KeyValuePair<long, bool>> IsRepositoryCollaborator(GitHubClient client, long repositoryId, string login)
         {
             var result = await client.Repository.Collaborator.IsCollaborator(repositoryId, login);
 
             return new KeyValuePair<long, bool>(repositoryId,result);
         }
+
+        private async Task<KeyValuePair<long, string>> GetRepositoryRole(GitHubClient client, long repositoryId, string login)
+        {
+            var result = await client.Repository.Collaborator.ReviewPermission(repositoryId, login);
+
+            return new KeyValuePair<long, string>(repositoryId, result.Permission.StringValue);
+        }
+
+
     }
 }
