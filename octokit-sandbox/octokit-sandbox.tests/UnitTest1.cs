@@ -139,6 +139,27 @@ namespace octokit_sandbox.tests
         }
 
         [Fact]
+        public async Task GetTeamMemberRoles_ValidTeam_GetsAllMembers()
+        {
+            var provider = ConfigureApplication();
+
+            var service = provider.GetService<OrganizationService>();
+
+            var organizations = await service.Get();
+
+            foreach (var item in organizations)
+            {
+                var teams = await service.GetTeams(item);
+                foreach (var team in teams)
+                {
+                    var members = await service.GetTeamMemberRoles(item, team.Key);
+                    Assert.NotEmpty(members);
+                }
+
+            }
+        }
+
+        [Fact]
         public async Task GetMemberRoles_ValidOrganization_GetsRolesOfAllMembers()
         {
             var provider = ConfigureApplication();

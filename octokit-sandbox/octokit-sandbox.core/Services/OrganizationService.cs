@@ -74,6 +74,32 @@ namespace octokit_sandbox.core.Services
             return result;
         }
 
+        public async Task<Dictionary<string,string>> GetTeamMemberRoles(string org, int teamId)
+        {
+            var client = _clientFactory.Create();
+            var installation = await client.GitHubApps.GetOrganizationInstallationForCurrent(org);
+
+            var orgClient = await _clientFactory.Create(installation.Id);
+            var members = await orgClient.Organization.Team.GetAllMembers(teamId);
+
+            var roleTasks = members
+                .Select(m => GetTeamMemberRole(orgClient,teamId,m.Login));
+
+            var roles = await Task.WhenAll(roleTasks);
+
+            var results = roles
+                .ToDictionary(r => r.Key, r => r.Value);
+
+            return results;
+        }
+
+        private async Task<KeyValuePair<string, string>> GetTeamMemberRole(GitHubClient client, int teamId, string login)
+        {
+            var role = await client.Organization.Team.GetMembershipDetails(teamId, login);
+
+            return new KeyValuePair<string, string>(login,role.Role.StringValue);
+        }
+
         public async Task<Dictionary<string,string>> GetMemberRoles(string org)
         {
             var client = _clientFactory.Create();
@@ -128,6 +154,7 @@ namespace octokit_sandbox.core.Services
             var installation = await client.GitHubApps.GetOrganizationInstallationForCurrent(org);
 
             var orgClient = await _clientFactory.Create(installation.Id);
+
             var collaborators = await orgClient.Repository.Collaborator.GetAll(repositoryId);
 
             var permissionsTasks = collaborators
