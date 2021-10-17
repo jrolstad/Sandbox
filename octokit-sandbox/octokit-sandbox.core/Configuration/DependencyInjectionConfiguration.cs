@@ -7,6 +7,7 @@ using Azure.Security.KeyVault.Secrets;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using octokit_sandbox.core.Factories;
+using octokit_sandbox.core.Services;
 
 namespace octokit_sandbox.core.Configuration
 {
@@ -17,6 +18,7 @@ namespace octokit_sandbox.core.Configuration
             services.AddTransient((provider) => configuration);
 
             services.AddTransient<GitHubClientFactory>();
+            services.AddTransient<OrganizationService>();
 
             ConfigureKeyVault(services);
         }

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Octokit;
 using octokit_sandbox.core.Configuration;
 using octokit_sandbox.core.Factories;
+using octokit_sandbox.core.Services;
 using Xunit;
 
 namespace octokit_sandbox.tests
@@ -72,6 +73,17 @@ namespace octokit_sandbox.tests
             }
         }
 
+        [Fact]
+        public async Task Get_NoInputs_GetsAllInstalledOrganizations()
+        {
+            var provider = ConfigureApplication();
+
+            var service = provider.GetService<OrganizationService>();
+
+            var organizations = await service.Get();
+
+            Assert.NotEmpty(organizations);
+        }
         private static ServiceProvider ConfigureApplication()
         {
             var configurations = new Dictionary<string, string>
