@@ -235,6 +235,22 @@ namespace octokit_sandbox.tests
             }
         }
 
+        [Fact]
+        public async Task GetRepositoriesForUser_ValidOrganization_GetsAllRepositoriesUserIsAuthorizedFor()
+        {
+            var provider = ConfigureApplication();
+
+            var service = provider.GetService<OrganizationService>();
+
+            var organizations = await service.Get();
+
+            foreach (var item in organizations)
+            {
+                var repositories = await service.GetRepositoriesForUser(item,"oppknox");
+                Assert.NotEmpty(repositories);
+            }
+        }
+
         private static ServiceProvider ConfigureApplication()
         {
             var configurations = new Dictionary<string, string>

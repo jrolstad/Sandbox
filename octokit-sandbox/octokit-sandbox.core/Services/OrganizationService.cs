@@ -167,5 +167,33 @@ namespace octokit_sandbox.core.Services
 
             return result;
         }
+
+        public async Task<List<long>> GetRepositoriesForUser(string org, string login)
+        {
+            var client = _clientFactory.Create();
+            var installation = await client.GitHubApps.GetOrganizationInstallationForCurrent(org);
+
+            var orgClient = await _clientFactory.Create(installation.Id);
+            var repositories = await orgClient.Repository.GetAllForOrg(org);
+
+            var collaboratorTasks = repositories
+                .Select(r => IsRepositoryCollaborator(orgClient, r.Id, login));
+
+            var collaborations = await Task.WhenAll(collaboratorTasks);
+
+            var result = collaborations
+                .Where(c => c.Value == true)
+                .Select(c => c.Key)
+                .ToList();
+
+            return result;
+        }
+
+        private async Task<KeyValuePair<long, bool>> IsRepositoryCollaborator(GitHubClient client, long repositoryId, string login)
+        {
+            var result = await client.Repository.Collaborator.IsCollaborator(repositoryId, login);
+
+            return new KeyValuePair<long, bool>(repositoryId,result);
+        }
     }
 }
