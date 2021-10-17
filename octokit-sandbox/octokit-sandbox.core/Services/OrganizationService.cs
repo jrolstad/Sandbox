@@ -73,5 +73,23 @@ namespace octokit_sandbox.core.Services
 
             return result;
         }
+
+        public async Task<Dictionary<string,string>> GetMemberRoles(string org)
+        {
+            var client = _clientFactory.Create();
+            var installation = await client.GitHubApps.GetOrganizationInstallationForCurrent(org);
+
+            var orgClient = await _clientFactory.Create(installation.Id);
+            var members = await orgClient.Organization.Member.GetAll(org);
+
+            var roleTasks = members
+                .Select(m => orgClient.Organization.Member.GetOrganizationMembership(org, m.Login));
+
+            var roles = await Task.WhenAll(roleTasks);
+            var rolesByUser = roles
+                .ToDictionary(r => r.User.Login, r => r.Role.StringValue);
+
+            return rolesByUser;
+        }
     }
 }

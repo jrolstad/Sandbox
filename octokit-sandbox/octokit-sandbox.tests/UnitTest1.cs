@@ -138,6 +138,22 @@ namespace octokit_sandbox.tests
             }
         }
 
+        [Fact]
+        public async Task GetMemberRoles_ValidOrganization_GetsRolesOfAllMembers()
+        {
+            var provider = ConfigureApplication();
+
+            var service = provider.GetService<OrganizationService>();
+
+            var organizations = await service.Get();
+
+            foreach (var item in organizations)
+            {
+                var roles = await service.GetMemberRoles(item);
+                Assert.NotEmpty(roles);
+            }
+        }
+
         private static ServiceProvider ConfigureApplication()
         {
             var configurations = new Dictionary<string, string>
