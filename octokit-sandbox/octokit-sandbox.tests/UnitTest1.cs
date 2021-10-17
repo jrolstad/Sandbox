@@ -84,6 +84,60 @@ namespace octokit_sandbox.tests
 
             Assert.NotEmpty(organizations);
         }
+
+        [Fact]
+        public async Task GetMembers_ValidOrganization_GetsAllMembers()
+        {
+            var provider = ConfigureApplication();
+
+            var service = provider.GetService<OrganizationService>();
+
+            var organizations = await service.Get();
+
+            foreach (var item in organizations)
+            {
+                var members = await service.GetMembers(item);
+                Assert.NotEmpty(members);
+            }
+        }
+
+        [Fact]
+        public async Task GetTeams_ValidOrganization_GetsAllTeams()
+        {
+            var provider = ConfigureApplication();
+
+            var service = provider.GetService<OrganizationService>();
+
+            var organizations = await service.Get();
+
+            foreach (var item in organizations)
+            {
+                var teams = await service.GetTeams(item);
+                Assert.NotEmpty(teams);
+            }
+        }
+
+        [Fact]
+        public async Task GetTeamMembers_ValidTeam_GetsAllMembers()
+        {
+            var provider = ConfigureApplication();
+
+            var service = provider.GetService<OrganizationService>();
+
+            var organizations = await service.Get();
+
+            foreach (var item in organizations)
+            {
+                var teams = await service.GetTeams(item);
+                foreach (var team in teams)
+                {
+                    var members = await service.GetTeamMembers(item, team.Key);
+                    Assert.NotEmpty(members);
+                }
+                
+            }
+        }
+
         private static ServiceProvider ConfigureApplication()
         {
             var configurations = new Dictionary<string, string>

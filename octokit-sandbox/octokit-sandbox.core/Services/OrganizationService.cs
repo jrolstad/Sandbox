@@ -28,5 +28,50 @@ namespace octokit_sandbox.core.Services
 
             return installedOrganizations;
         }
+
+        public async Task<List<string>> GetMembers(string org)
+        {
+            var client = _clientFactory.Create();
+            var installation = await client.GitHubApps.GetOrganizationInstallationForCurrent(org);
+
+            var orgClient = await _clientFactory.Create(installation.Id);
+            var members = await orgClient.Organization.Member.GetAll(org);
+
+            var result = members
+                .Select(m => m.Login)
+                .ToList();
+
+            return result;
+        }
+
+        public async Task<Dictionary<int,string>> GetTeams(string org)
+        {
+            var client = _clientFactory.Create();
+            var installation = await client.GitHubApps.GetOrganizationInstallationForCurrent(org);
+
+            var orgClient = await _clientFactory.Create(installation.Id);
+            var teams = await orgClient.Organization.Team.GetAll(org);
+            
+
+            var result = teams
+                .ToDictionary(t => t.Id, t => t.Name);
+
+            return result;
+        }
+
+        public async Task<List<string>> GetTeamMembers(string org, int teamId)
+        {
+            var client = _clientFactory.Create();
+            var installation = await client.GitHubApps.GetOrganizationInstallationForCurrent(org);
+
+            var orgClient = await _clientFactory.Create(installation.Id);
+            var members = await orgClient.Organization.Team.GetAllMembers(teamId);
+
+            var result = members
+                .Select(m => m.Login)
+                .ToList();
+
+            return result;
+        }
     }
 }
