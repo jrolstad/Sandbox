@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Octokit;
 using octokit_sandbox.core.Configuration;
 using octokit_sandbox.core.Factories;
 using octokit_sandbox.core.Services;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace octokit_sandbox.tests
@@ -151,6 +151,66 @@ namespace octokit_sandbox.tests
             {
                 var roles = await service.GetMemberRoles(item);
                 Assert.NotEmpty(roles);
+            }
+        }
+
+        [Fact]
+        public async Task GetRepositories_ValidOrganization_GetsAllRepositories()
+        {
+            var provider = ConfigureApplication();
+
+            var service = provider.GetService<OrganizationService>();
+
+            var organizations = await service.Get();
+
+            foreach (var item in organizations)
+            {
+                var repositories = await service.GetRepositories(item);
+                Assert.NotEmpty(repositories);
+            }
+        }
+
+        [Fact]
+        public async Task GetRepositoryCollaborators_ValidOrganizationAndRepository_GetsAllCollaborators()
+        {
+            var provider = ConfigureApplication();
+
+            var service = provider.GetService<OrganizationService>();
+
+            var organizations = await service.Get();
+
+            foreach (var item in organizations)
+            {
+                var repositories = await service.GetRepositories(item);
+
+                foreach (var repo in repositories)
+                {
+                    var collaborators = await service.GetRepositoryCollaborators(item,repo.Key);
+
+                    Assert.NotEmpty(collaborators);
+                }
+            }
+        }
+
+        [Fact]
+        public async Task GetRepositoryCollaboratorPermissions_ValidOrganizationAndRepository_GetsAllCollaborators()
+        {
+            var provider = ConfigureApplication();
+
+            var service = provider.GetService<OrganizationService>();
+
+            var organizations = await service.Get();
+
+            foreach (var item in organizations)
+            {
+                var repositories = await service.GetRepositories(item);
+
+                foreach (var repo in repositories)
+                {
+                    var collaborators = await service.GetRepositoryCollaboratorPermissions(item, repo.Key);
+
+                    Assert.NotEmpty(collaborators);
+                }
             }
         }
 

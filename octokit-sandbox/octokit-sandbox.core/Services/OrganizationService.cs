@@ -91,5 +91,54 @@ namespace octokit_sandbox.core.Services
 
             return rolesByUser;
         }
+
+        public async Task<Dictionary<long,string>> GetRepositories(string org)
+        {
+            var client = _clientFactory.Create();
+            var installation = await client.GitHubApps.GetOrganizationInstallationForCurrent(org);
+
+            var orgClient = await _clientFactory.Create(installation.Id);
+            var repositories = await orgClient.Repository.GetAllForOrg(org);
+
+
+            var result = repositories
+                .ToDictionary(r => r.Id, r => r.Name);
+
+            return result;
+        }
+
+        public async Task<List<string>> GetRepositoryCollaborators(string org, long repositoryId)
+        {
+            var client = _clientFactory.Create();
+            var installation = await client.GitHubApps.GetOrganizationInstallationForCurrent(org);
+
+            var orgClient = await _clientFactory.Create(installation.Id);
+            var collaborators = await orgClient.Repository.Collaborator.GetAll(repositoryId);
+
+            var result = collaborators
+                .Select(m => m.Login)
+                .ToList();
+
+            return result;
+        }
+
+        public async Task<Dictionary<string,string>> GetRepositoryCollaboratorPermissions(string org, long repositoryId)
+        {
+            var client = _clientFactory.Create();
+            var installation = await client.GitHubApps.GetOrganizationInstallationForCurrent(org);
+
+            var orgClient = await _clientFactory.Create(installation.Id);
+            var collaborators = await orgClient.Repository.Collaborator.GetAll(repositoryId);
+
+            var permissionsTasks = collaborators
+                .Select(c => orgClient.Repository.Collaborator.ReviewPermission(repositoryId, c.Login));
+
+            var permissions = await Task.WhenAll(permissionsTasks);
+
+            var result = permissions
+                .ToDictionary(p => p.User.Login, p => p.Permission.StringValue);
+
+            return result;
+        }
     }
 }
